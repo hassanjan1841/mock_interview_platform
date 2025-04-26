@@ -18,7 +18,7 @@ interface Interview {
   role: string;
   level: string;
   questions: string[];
-  techstack: string[];
+  techStack: string[];
   createdAt: string;
   userId: string;
   type: string;
