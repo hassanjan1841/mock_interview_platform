@@ -24,7 +24,7 @@ const checkIconExists = async (url: string) => {
 };
 
 export const getTechLogos = async (techArray: string[]) => {
-  const logoURLs = techArray.map((tech) => {
+  const logoURLs = techArray?.map((tech) => {
     const normalized = normalizeTechName(tech);
     return {
       tech,
@@ -33,7 +33,7 @@ export const getTechLogos = async (techArray: string[]) => {
   });
 
   const results = await Promise.all(
-    logoURLs.map(async ({ tech, url }) => ({
+    (logoURLs || []).map(async ({ tech, url }) => ({
       tech,
       url: (await checkIconExists(url)) ? url : "/fallback.svg",
     }))
