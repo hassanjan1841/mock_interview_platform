@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { vapi } from "@/lib/vapi.sdk";
 import { interviewer } from "@/constants";
+import { createFeedback } from "@/lib/actions/general.action";
 
 enum CallStatus {
   INACTIVE = "INACTIVE",
@@ -31,16 +32,14 @@ const Agent = ({
   );
   const [isSpeaking, setIsSpeaking] = React.useState(false);
   const [messages, setMessages] = React.useState<SavedMessage[]>([]);
-
   const handleGenerateFeedback = async (messages: SavedMessage[]) => {
-    console.log("Generating feedback...");
-    // TODO: create a server action that generate feedback
-    const { success, id } = {
-      success: true,
-      id: interviewId,
-    };
+    const { success, feedbackId: id } = await createFeedback({
+      interviewId: interviewId!,
+      userId: userId!,
+      transcript: messages,
+    });
     if (success && id) {
-      router.push(`/interview/${id}/feedback`);
+      router.push(`/interview/${interviewId}/feedback`);
     } else {
       console.error("Error generating feedback");
       router.push("/");
@@ -91,7 +90,7 @@ const Agent = ({
         handleGenerateFeedback(messages);
       }
     }
-    if (callStatus === CallStatus.FINISHED) router.push("/");
+    // if (callStatus === CallStatus.FINISHED) router.push("/");
   }, [messages, type, userId, callStatus]);
 
   const handleCall = async () => {
