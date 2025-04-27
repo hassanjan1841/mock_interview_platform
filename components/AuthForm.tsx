@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -30,6 +30,7 @@ const authFormSchema = (type: FormType) => {
 
 const AuthForm = ({ type }: { type: FormType }) => {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const formSchema = authFormSchema(type);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -42,6 +43,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
     try {
       if (type === "sign-in") {
         const { email, password } = values;
@@ -84,6 +86,8 @@ const AuthForm = ({ type }: { type: FormType }) => {
     } catch (error) {
       console.log(error);
       toast.error(`Something went wrong. Please try again. ${error}`);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -122,8 +126,12 @@ const AuthForm = ({ type }: { type: FormType }) => {
               type="password"
               control={form.control}
             />
-            <Button type="submit" className="btn">
-              {isSignIn ? "Sign In" : "Create an Account"}
+            <Button type="submit" className="btn" disabled={loading}>
+              {loading
+                ? "Loading..."
+                : isSignIn
+                ? "Sign In"
+                : "Create an Account"}
             </Button>
             <p className="text-center">
               {isSignIn ? "Don't have an account?" : "Already have an account?"}

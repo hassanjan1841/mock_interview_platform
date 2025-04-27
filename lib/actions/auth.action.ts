@@ -42,6 +42,7 @@ export async function signIn(params: SignInParams) {
   const { email, idToken } = params;
   try {
     const userRecord = await auth.getUserByEmail(email);
+
     if (!userRecord) {
       return {
         success: false,
@@ -104,15 +105,23 @@ export async function getCurrentUser(): Promise<User | null> {
     if (!userRecord.exists) return null;
 
     const userData = userRecord.data();
+    const photoURL = (await auth.getUserByEmail(userData?.email!)).photoURL;
+
     return {
       id: userRecord.id,
       name: userData?.name,
       email: userData?.email,
+      photoURL: photoURL || "",
     };
   } catch (error) {
     console.error("Error verifying session cookie:", error);
     return null;
   }
+}
+
+export async function handleLogout() {
+  const cookieStore = await cookies();
+  cookieStore.delete("session");
 }
 
 export async function isAuthenticated(): Promise<boolean> {
