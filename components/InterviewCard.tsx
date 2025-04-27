@@ -7,13 +7,13 @@ import Link from "next/link";
 import DisplayTechIcons from "./DisplayTechicons";
 
 const InterviewCard = ({
-  interviewId,
+  id,
   userId,
   role,
   type,
   techStack,
   createdAt,
-}) => {
+}: InterviewCardProps) => {
   const feedback = null as Feedback | null;
   const normalizedType = /mix/gi.test(type) ? "Mixed" : type;
   const formattedDate = dayjs(
@@ -59,11 +59,7 @@ const InterviewCard = ({
           <DisplayTechIcons techStack={techStack} />
           <Button asChild className="btn-primary">
             <Link
-              href={
-                feedback
-                  ? `/interview/${interviewId}/feedback`
-                  : `/interview/${interviewId}`
-              }
+              href={feedback ? `/interview/${id}/feedback` : `/interview/${id}`}
             >
               {feedback ? "Check Feedback" : "View Interview"}
             </Link>
